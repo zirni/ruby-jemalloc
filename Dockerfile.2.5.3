@@ -23,7 +23,7 @@ RUN set -ex \
 		ruby \
 	' \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends $buildDeps libjemalloc-dev \
+	&& apt-get install -y --no-install-recommends $buildDeps  debian-keyring libjemalloc-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz" \
@@ -58,9 +58,9 @@ RUN set -ex \
 	&& cd / \
 	&& rm -r /usr/src/ruby \
 # make sure bundled "rubygems" is older than RUBYGEMS_VERSION (https://github.com/docker-library/ruby/issues/246)
-	&& gem update --system "$RUBYGEMS_VERSION" \		&& ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))' \
-	&& gem install bundler --version "$BUNDLER_VERSION" --force \		&& gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/ \
-	&& rm -r /root/.gem/	# rough smoke test
+	&& ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))' \
+	&& gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/ \
+# rough smoke test
 	&& ruby --version && gem --version && bundle --version
 
 # install things globally, for great justice
